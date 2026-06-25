@@ -1,10 +1,12 @@
 package api
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -216,6 +218,21 @@ func (s *Server) handleRebuy(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			writeError(w, http.StatusMethodNotAllowed, "method not allowed")
 			return
+		}
+
+		if user == nil && s.bypassAuth {
+			var req RebuyRequest
+			bodyBytes, _ := io.ReadAll(r.Body)
+			_ = json.Unmarshal(bodyBytes, &req)
+			r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+			if req.UUID != "" {
+				looked, lookErr := store.GetUserByUUID(s.db, req.UUID)
+				if lookErr != nil {
+					writeError(w, http.StatusInternalServerError, "database error")
+					return
+				}
+				user = looked
+			}
 		}
 
 		if user == nil {

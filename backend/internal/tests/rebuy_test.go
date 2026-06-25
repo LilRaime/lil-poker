@@ -25,6 +25,7 @@ func TestRebuy(t *testing.T) {
 	_ = UpdateUserChips(db, uuidStr, 0)
 
 	room, _ := server.RoomManager().GetRoom(roomID)
+	room.StartingChips = 0
 	room.Sg.Lock()
 	for _, p := range room.Sg.GetGame().Players {
 		if p.ID == uuidStr {
@@ -35,7 +36,7 @@ func TestRebuy(t *testing.T) {
 
 	rebReq := RebuyRequest{UUID: uuidStr}
 	body, _ := json.Marshal(rebReq)
-	req := httptest.NewRequest("POST", "/api/auth/rebuy", bytes.NewBuffer(body))
+	req := httptest.NewRequest("POST", "/api/auth/rebuy?room="+roomID, bytes.NewBuffer(body))
 	w := httptest.NewRecorder()
 	handler.ServeHTTP(w, req)
 

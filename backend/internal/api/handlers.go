@@ -383,15 +383,20 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "database error")
 		return
 	}
-	if user == nil {
+	if user == nil && !s.bypassAuth {
 		writeError(w, http.StatusUnauthorized, "session invalid")
 		return
 	}
 
-	playerID := user.UUID
+	playerID := ""
+	username := "observer"
+	if user != nil {
+		playerID = user.UUID
+		username = user.Username
+	}
 
 	r2.Wsm.DisconnectPlayer(playerID)
-	
+
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
@@ -403,7 +408,7 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 
-	client := room.NewWsClient(conn, playerID, user.Username)
+	client := room.NewWsClient(conn, playerID, username)
 	s.registerClient(r2, client)
 
 	go s.writePump(r2, client)
