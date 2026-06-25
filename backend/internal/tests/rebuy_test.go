@@ -44,7 +44,9 @@ func TestRebuy(t *testing.T) {
 	}
 
 	var res map[string]interface{}
-	json.NewDecoder(w.Body).Decode(&res)
+	if err := json.NewDecoder(w.Body).Decode(&res); err != nil {
+		t.Fatalf("failed to decode rebuy response: %v", err)
+	}
 	if res["chips"].(float64) != float64(rebuyAmount) {
 		t.Errorf("expected %d chips, got %v", rebuyAmount, res["chips"])
 	}
@@ -80,7 +82,9 @@ func TestRebuy_DeadlockReset(t *testing.T) {
 	handler.ServeHTTP(wReg, reqReg)
 
 	var regRes map[string]interface{}
-	json.NewDecoder(wReg.Body).Decode(&regRes)
+	if err := json.NewDecoder(wReg.Body).Decode(&regRes); err != nil {
+		t.Fatalf("failed to decode register response: %v", err)
+	}
 	uuidStr := regRes["uuid"].(string)
 
 	_ = store.UpdateUserChipsAndRebuys(db, uuidStr, 0, 0)
@@ -96,7 +100,9 @@ func TestRebuy_DeadlockReset(t *testing.T) {
 	}
 
 	var res map[string]interface{}
-	json.NewDecoder(w.Body).Decode(&res)
+	if err := json.NewDecoder(w.Body).Decode(&res); err != nil {
+		t.Fatalf("failed to decode rebuy response: %v", err)
+	}
 	if res["chips"].(float64) != float64(rebuyAmount) {
 		t.Errorf("expected %d chips, got %v", rebuyAmount, res["chips"])
 	}

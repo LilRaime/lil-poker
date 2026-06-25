@@ -37,7 +37,9 @@ func TestPokerAPIWorkflow(t *testing.T) {
 	handler.ServeHTTP(wStatus, reqStatus)
 
 	var statusRes GameStateResponse
-	json.NewDecoder(wStatus.Body).Decode(&statusRes)
+	if err := json.NewDecoder(wStatus.Body).Decode(&statusRes); err != nil {
+		t.Fatalf("failed to decode status response: %v", err)
+	}
 	if len(statusRes.Players) != 3 {
 		t.Fatalf("expected 3 players, got %d", len(statusRes.Players))
 	}
@@ -57,7 +59,9 @@ func TestPokerAPIWorkflow(t *testing.T) {
 	wStatusAnon := httptest.NewRecorder()
 	handler.ServeHTTP(wStatusAnon, reqStatusAnon)
 	var statusAnon GameStateResponse
-	json.NewDecoder(wStatusAnon.Body).Decode(&statusAnon)
+	if err := json.NewDecoder(wStatusAnon.Body).Decode(&statusAnon); err != nil {
+		t.Fatalf("failed to decode anonymous status response: %v", err)
+	}
 
 	for _, p := range statusAnon.Players {
 		if len(p.Hole) > 0 {
@@ -118,7 +122,9 @@ func TestAllInFlow(t *testing.T) {
 	wStatus := httptest.NewRecorder()
 	handler.ServeHTTP(wStatus, reqStatus)
 	var status GameStateResponse
-	json.NewDecoder(wStatus.Body).Decode(&status)
+	if err := json.NewDecoder(wStatus.Body).Decode(&status); err != nil {
+		t.Fatalf("failed to decode status response: %v", err)
+	}
 
 	activeID := p1ID
 	inactiveID := p2ID
@@ -146,7 +152,9 @@ func TestAllInFlow(t *testing.T) {
 	}
 
 	var finalStatus GameStateResponse
-	json.NewDecoder(wAct2.Body).Decode(&finalStatus)
+	if err := json.NewDecoder(wAct2.Body).Decode(&finalStatus); err != nil {
+		t.Fatalf("failed to decode final status: %v", err)
+	}
 
 	if finalStatus.Phase != "Waiting" {
 		t.Errorf("expected game to finish and return to Waiting phase, got %s", finalStatus.Phase)

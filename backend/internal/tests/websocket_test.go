@@ -26,7 +26,9 @@ func TestWebSocketBroadcast(t *testing.T) {
 	}
 	defer respRoom.Body.Close()
 	var roomInfo RoomInfo
-	json.NewDecoder(respRoom.Body).Decode(&roomInfo)
+	if err := json.NewDecoder(respRoom.Body).Decode(&roomInfo); err != nil {
+		t.Fatalf("failed to decode room info: %v", err)
+	}
 	roomID := roomInfo.ID
 
 	wsURL := "ws" + testServer.URL[4:] + "/api/game/ws?room=" + roomID
@@ -57,7 +59,9 @@ func TestWebSocketBroadcast(t *testing.T) {
 		t.Fatalf("expected StatusCreated, got %d", respReg.StatusCode)
 	}
 	var regRes map[string]interface{}
-	json.NewDecoder(respReg.Body).Decode(&regRes)
+	if err := json.NewDecoder(respReg.Body).Decode(&regRes); err != nil {
+		t.Fatalf("failed to decode register response: %v", err)
+	}
 	uuidStr := regRes["uuid"].(string)
 
 	seatReq := AddPlayerRequest{UUID: uuidStr}

@@ -403,7 +403,9 @@ func TestCustomizableBlindEscalation(t *testing.T) {
 		t.Fatalf("failed to create room: status %d", w2.Code)
 	}
 	var ri2 RoomInfo
-	json.NewDecoder(w2.Body).Decode(&ri2)
+	if err := json.NewDecoder(w2.Body).Decode(&ri2); err != nil {
+		t.Fatalf("failed to decode room info: %v", err)
+	}
 
 	if ri2.BlindEscalationMins != 0 {
 		t.Errorf("expected blind_escalation_mins to be 0, got %d", ri2.BlindEscalationMins)
