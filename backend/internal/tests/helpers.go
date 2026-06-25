@@ -120,7 +120,9 @@ func createTestRoom(t *testing.T, handler http.Handler) string {
 		t.Fatalf("failed to create room: status %d, body: %s", w.Code, w.Body.String())
 	}
 	var ri room.RoomInfo
-	json.NewDecoder(w.Body).Decode(&ri)
+	if err := json.NewDecoder(w.Body).Decode(&ri); err != nil {
+		t.Fatalf("failed to decode room info: %v", err)
+	}
 	return ri.ID
 }
 
@@ -136,7 +138,9 @@ func registerAndSeatPlayer(t *testing.T, handler http.Handler, username string, 
 	}
 
 	var regRes map[string]interface{}
-	json.NewDecoder(wReg.Body).Decode(&regRes)
+	if err := json.NewDecoder(wReg.Body).Decode(&regRes); err != nil {
+		t.Fatalf("failed to decode register response: %v", err)
+	}
 	uuidStr := regRes["uuid"].(string)
 
 	seatReq := api.AddPlayerRequest{UUID: uuidStr}

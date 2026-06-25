@@ -87,7 +87,7 @@ func UpdateUsersChipsTx(db *sql.DB, updates map[string]int) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() { _ = tx.Rollback() }()
 
 	stmt, err := tx.Prepare(`UPDATE users SET chips = $1 WHERE uuid = $2`)
 	if err != nil {

@@ -16,9 +16,6 @@ import (
 	"lil-poker/internal/store"
 )
 
-const startingChips = 1000
-const rebuyAmount = startingChips
-
 const bcryptCost = 12
 
 func hashPassword(password string) (string, error) {

@@ -142,7 +142,9 @@ func TestPreFlopCall2Players(t *testing.T) {
 	wStatus := httptest.NewRecorder()
 	handler.ServeHTTP(wStatus, reqStatus)
 	var status GameStateResponse
-	json.NewDecoder(wStatus.Body).Decode(&status)
+	if err := json.NewDecoder(wStatus.Body).Decode(&status); err != nil {
+		t.Fatalf("failed to decode game state response: %v", err)
+	}
 
 	activeID := status.ActivePlayerID
 	if activeID == "" {
