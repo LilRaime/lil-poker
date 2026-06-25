@@ -165,7 +165,9 @@ func TestPreFlopCall2Players(t *testing.T) {
 	}
 
 	var statusAfterCall GameStateResponse
-	json.NewDecoder(wAct.Body).Decode(&statusAfterCall)
+	if err := json.NewDecoder(wAct.Body).Decode(&statusAfterCall); err != nil {
+		t.Fatalf("failed to decode status after call: %v", err)
+	}
 
 	callerFound := false
 	for _, p := range statusAfterCall.Players {
@@ -202,7 +204,9 @@ func TestPreFlopCall2Players(t *testing.T) {
 	}
 
 	var statusAfterCheck GameStateResponse
-	json.NewDecoder(wAct2.Body).Decode(&statusAfterCheck)
+	if err := json.NewDecoder(wAct2.Body).Decode(&statusAfterCheck); err != nil {
+		t.Fatalf("failed to decode status after check: %v", err)
+	}
 
 	if statusAfterCheck.Phase != "Flop" {
 		t.Errorf("expected phase to advance to Flop, got %s", statusAfterCheck.Phase)
@@ -382,7 +386,9 @@ func TestCustomizableBlindEscalation(t *testing.T) {
 		t.Fatalf("failed to create room: status %d", w1.Code)
 	}
 	var ri1 RoomInfo
-	json.NewDecoder(w1.Body).Decode(&ri1)
+	if err := json.NewDecoder(w1.Body).Decode(&ri1); err != nil {
+		t.Fatalf("failed to decode room info: %v", err)
+	}
 
 	if ri1.BlindEscalationMins != 15 {
 		t.Errorf("expected blind_escalation_mins to be 15, got %d", ri1.BlindEscalationMins)
