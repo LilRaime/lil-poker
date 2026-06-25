@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: lil-poker-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lil-poker}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.8-alpine
+    container_name: lil-poker-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  api:
+    build: ./backend
+    container_name: lil-poker-api
+    expose:
+      - "8080"
+    environment:
+      - PORT=${PORT:-8080}
+      - SMALL_BLIND=${SMALL_BLIND:-10}
+      - BIG_BLIND=${BIG_BLIND:-20}
+      - TURN_TIMEOUT_SECS=${TURN_TIMEOUT_SECS:-20}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-lil-poker}
+      - REDIS_ADDR=redis:6379
+      - COOKIE_SECRET=${COOKIE_SECRET:-}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: lil-poker-frontend
+    ports:
+      - "8090:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:

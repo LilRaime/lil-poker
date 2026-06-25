@@ -1,0 +1,271 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-heavy {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.poker-felt {
+  background: radial-gradient(circle, #14532d 0%, #052e16 75%, #02150a 100%);
+  border: 10px solid #451a03;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8), 0 25px 50px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes activeGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), inset 0 0 5px rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), inset 0 0 10px rgba(168, 85, 247, 0.4);
+    border-color: rgba(168, 85, 247, 1);
+  }
+}
+
+.active-turn-glow {
+  animation: activeGlow 2s infinite ease-in-out;
+}
+
+@keyframes dealCard {
+  0% {
+    transform: translate(-100px, -100px) scale(0.2) rotate(-90deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-deal {
+  animation: dealCard 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+@keyframes betPop {
+  0% {
+    transform: scale(0) translateY(10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-bet-pop {
+  animation: betPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes potPop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+    color: #fbbf24;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pot-pop {
+  display: inline-block;
+  animation: potPop 0.35s ease-out;
+}
+
+.card-back-pattern {
+  background-color: #450a0a;
+  background-image:
+    radial-gradient(circle at 50% 50%, #991b1b 15%, transparent 16%),
+    radial-gradient(circle at 0% 50%, #991b1b 10%, transparent 11%),
+    radial-gradient(circle at 100% 50%, #991b1b 10%, transparent 11%),
+    radial-gradient(circle at 50% 0%, #991b1b 10%, transparent 11%),
+    radial-gradient(circle at 50% 100%, #991b1b 10%, transparent 11%),
+    linear-gradient(45deg, rgba(251, 191, 36, 0.05) 25%, transparent 25%, transparent 75%, rgba(251, 191, 36, 0.05) 75%),
+    linear-gradient(-45deg, rgba(251, 191, 36, 0.05) 25%, transparent 25%, transparent 75%, rgba(251, 191, 36, 0.05) 75%);
+  background-size: 12px 12px;
+  border: 2px solid #f59e0b;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes chipFly {
+  0% {
+    left: var(--start-x);
+    top: var(--start-y);
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    left: var(--end-x);
+    top: var(--end-y);
+    transform: scale(1) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-chip-fly {
+  animation: chipFly 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+body.light-theme {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+body.light-theme .bg-slate-950 {
+  background-color: #f8fafc !important;
+}
+
+body.light-theme .glass-panel {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .glass-panel-heavy {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .text-slate-100,
+body.light-theme .text-slate-200,
+body.light-theme .text-slate-300 {
+  color: #0f172a !important;
+}
+
+body.light-theme .text-slate-400,
+body.light-theme .text-slate-500 {
+  color: #475569 !important;
+}
+
+body.light-theme .bg-slate-900,
+body.light-theme .bg-slate-900\/80,
+body.light-theme .bg-slate-900\/90 {
+  background-color: #f1f5f9 !important;
+}
+
+body.light-theme .bg-slate-950\/80,
+body.light-theme .bg-slate-950\/60 {
+  background-color: #e2e8f0 !important;
+}
+
+body.light-theme input,
+body.light-theme select,
+body.light-theme textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+body.light-theme input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.light-theme .bg-purple-950\/80 {
+  background-color: rgba(147, 51, 234, 0.1) !important;
+}
+
+body.light-theme .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+body.light-theme .border-white\/8 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+body.light-theme .bg-white\/5,
+body.light-theme .bg-white\/3 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+
+body.light-theme .glass-button {
+  background: rgba(15, 23, 42, 0.03) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+}
+
+body.light-theme .glass-button:hover {
+  background: rgba(15, 23, 42, 0.08) !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
