@@ -41,9 +41,7 @@ jobs:
         run: cd backend && go vet ./...
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          working-directory: backend
+        run: cd backend && go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8 run ./...
 
       - name: Run govulncheck
         run: cd backend && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
