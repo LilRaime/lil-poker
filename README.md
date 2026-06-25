@@ -2,6 +2,17 @@
 
 **Lil Poker** is a web-based multiplayer Texas Hold'em poker game played in real-time. Built with a modern and highly efficient technology stack, it allows players to create custom game rooms with flexible settings, chat, and play poker with friends.
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="screenshots/1.png" alt="Lil Poker Login/Authentication" width="49%" />
+  <img src="screenshots/2.png" alt="Lil Poker Room Browser / Lobby" width="49%" />
+</p>
+<p align="center">
+  <img src="screenshots/3.png" alt="Lil Poker Game Room Table" width="49%" />
+  <img src="screenshots/4.png" alt="Lil Poker Gameplay in Action" width="49%" />
+</p>
+
 ---
 
 ## 🚀 Key Features
