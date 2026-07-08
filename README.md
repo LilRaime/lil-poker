@@ -23,6 +23,9 @@
   - Adjust small/big blind values and turn timeout durations.
   - Time-based automatic blind escalation.
   - Set initial stack sizes and maximum rebuy limits.
+  - **Chip Mode** — choose between:
+    - 🏆 **Tournament** — every player starts with a fixed chip stack (isolated per room).
+    - 💰 **Persistent** — players bring their real account balance; winnings and losses carry over across sessions.
 - **Flexible Authentication**:
   - Quick Guest login to start playing instantly without registration.
   - Registered user accounts to persist chip balances and records.
@@ -32,6 +35,7 @@
   - Turn countdown timer for active players.
   - Hand history tracking.
   - Optional auto-rebuy toggle.
+  - Chip mode badge (Tournament / Persistent) visible in both the lobby and the game header.
 - **Communication & Logging**: Integrated real-time chat and system logs highlighting active table events.
 - **Security & Stability**:
   - Session collision detection (disallows multiple active tabs for the same account).
@@ -57,6 +61,7 @@
 
 ### Infrastructure & DevOps
 - **Containerization**: Docker & Docker Compose
+- **Kubernetes**: Kind + Helm chart (see `.infra/helm/`)
 - **Automation**: Makefile
 
 ---
@@ -75,12 +80,15 @@ lil-poker/
 │       ├── hand/          # Hand strength evaluator
 │       ├── middleware/    # Rate limiters and utility middlewares
 │       ├── room/          # Rooms manager and client broadcaster
-│       └── store/         # PostgreSQL persistence and SQL migrations
+│       ├── store/         # PostgreSQL persistence and SQL migrations
+│       └── types/         # Shared response types (GameStateResponse, etc.)
 ├── frontend/              # React single-page application (SPA)
 │   ├── src/               # React components, hooks, assets, and utilities
 │   └── nginx.conf         # Nginx server configuration for Docker deployment
+├── .infra/
+│   └── helm/              # Helm chart for Kubernetes deployment (via Kind)
 ├── docker-compose.yml     # Configuration for Docker services (App, DB, Redis)
-└── Makefile               # Helper commands for local development
+└── Makefile               # Helper commands for local development and k8s
 ```
 
 ---

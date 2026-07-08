@@ -10,6 +10,7 @@ export interface RoomInfo {
   big_blind: number;
   creator_id: string;
   blind_escalation_mins?: number;
+  starting_chips: number;
 }
 
 export interface PlayerStatus {
@@ -85,4 +86,5 @@ export interface GameStateResponse {
   creator_id?: string;
   sub_pots?: SubPot[];
   observers?: string[];
+  starting_chips: number;
 }

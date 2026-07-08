@@ -36,18 +36,18 @@ const Card = memo(function Card({ cardStr, faceDown = false, className, highligh
   let styleRankSize: number | undefined;
   let styleMiddleSuitSize: number | undefined;
 
-  if (scale !== undefined && scale < 0.6) {
+  if (scale !== undefined && scale < 0.65) {
     const isPlayerCard = className?.includes("w-10");
     const baseWidth = isPlayerCard ? 40 : 48;
     const baseHeight = isPlayerCard ? 56 : 72;
-    const minWidth = isPlayerCard ? 24 : 30;
-    const minHeight = isPlayerCard ? 34 : 45;
+    const minWidth = isPlayerCard ? 30 : 42;
+    const minHeight = isPlayerCard ? 44 : 64;
 
     styleWidth = Math.max(minWidth, baseWidth * scale) / scale;
     styleHeight = Math.max(minHeight, baseHeight * scale) / scale;
 
-    styleRankSize = Math.max(9, 12 * scale) / scale;
-    styleMiddleSuitSize = Math.max(11, 16 * scale) / scale;
+    styleRankSize = Math.max(11, 12 * scale) / scale;
+    styleMiddleSuitSize = Math.max(14, 18 * scale) / scale;
   }
 
   if (faceDown || !cardStr) {

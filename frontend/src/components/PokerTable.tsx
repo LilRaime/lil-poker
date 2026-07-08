@@ -131,11 +131,13 @@ export default function PokerTable({
       .sort((a, b) => a.seat - b.seat);
   }, [gameState.players]);
 
+    const extraHeight = scale === 1 ? 20 : Math.round((1 - scale) * 270);
+
   return (
     <div
       ref={containerRef}
       className="w-full max-w-3xl flex items-center justify-center my-1.5 sm:my-2 relative"
-      style={{ height: `${wrapperHeight * scale}px` }}
+      style={{ height: `${(wrapperHeight + extraHeight) * scale}px` }}
     >
       <div
         className="select-none"
@@ -159,10 +161,10 @@ export default function PokerTable({
           <div className="absolute inset-2 border-2 border-white/5 rounded-full pointer-events-none opacity-20" />
 
           <div className="flex flex-col items-center glass-panel px-4 py-3.5 rounded-xl shadow-2xl border border-white/5 z-0">
-            <div className="flex items-center space-x-2 bg-slate-900/80 border border-white/5 px-4 py-1.5 rounded-full mb-2 shadow-inner">
-              <span className="text-yellow-400 text-sm">🪙</span>
-              <span className="text-xs uppercase tracking-widest text-slate-400">Pot:</span>
-              <span key={gameState.pot} className="font-black text-slate-100 text-sm animate-pot-pop">
+            <div className="flex items-center space-x-2 bg-slate-900/80 border border-amber-500/20 px-4 py-2 rounded-full mb-2 shadow-inner">
+              <span className="text-yellow-400 text-base">🪙</span>
+              <span className="text-[10px] uppercase tracking-widest text-slate-400">Pot:</span>
+              <span key={gameState.pot} className="font-black text-amber-100 text-base animate-pot-pop">
                 {gameState.pot}
               </span>
             </div>

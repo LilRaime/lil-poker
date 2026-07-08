@@ -80,12 +80,12 @@ func TestToResponseShowdownCards(t *testing.T) {
 	sg.UpdateHandEvaluations()
 	sg.Unlock()
 
-	respAnon := sg.GetStatus("", 0)
+	respAnon := sg.GetStatus("", 0, 0)
 	if len(respAnon.Players[0].Hole) > 0 {
 		t.Error("expected gungnir's hole cards to be hidden from anonymous on fold-out, but got some")
 	}
 
-	respGungnir := sg.GetStatus("p1", 0)
+	respGungnir := sg.GetStatus("p1", 0, 0)
 	if len(respGungnir.Players[0].Hole) != 2 {
 		t.Errorf("expected gungnir to see her own hole cards on fold-out, got %d", len(respGungnir.Players[0].Hole))
 	}
@@ -106,7 +106,7 @@ func TestToResponseShowdownCards(t *testing.T) {
 	sg2.UpdateHandEvaluations()
 	sg2.Unlock()
 
-	respAnon2 := sg2.GetStatus("", 0)
+	respAnon2 := sg2.GetStatus("", 0, 0)
 	if len(respAnon2.Players[0].Hole) != 2 {
 		t.Error("expected gungnir's hole cards to be visible to everyone on showdown, but got none")
 	}
@@ -247,7 +247,7 @@ func TestVerifyShowdownHighlight(t *testing.T) {
 	sg.UpdateHandEvaluations()
 	sg.Unlock()
 
-	status := sg.GetStatus("p1", 0)
+	status := sg.GetStatus("p1", 0, 0)
 
 	if len(status.LastWinners) != 1 {
 		t.Fatalf("expected 1 winner, got %d", len(status.LastWinners))

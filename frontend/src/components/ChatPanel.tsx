@@ -88,7 +88,7 @@ export default function ChatPanel({
   }, [filteredMessages.length, activeTab]);
 
   return (
-    <div className="flex flex-col bg-slate-900/90 border border-white/10 rounded-2xl shadow-2xl overflow-hidden h-[320px] sm:h-[385px] lg:h-[580px] w-full">
+    <div className="flex flex-col bg-slate-900/90 border border-white/10 rounded-2xl shadow-2xl overflow-hidden h-[380px] sm:h-[385px] lg:h-[580px] w-full">
       <div className="bg-slate-950/80 border-b border-white/5 flex flex-col">
         <div className="px-4 py-3 flex items-center justify-between border-b border-white/5">
           <span className="text-xs uppercase tracking-widest text-slate-400 font-extrabold">

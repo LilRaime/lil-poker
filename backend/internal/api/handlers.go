@@ -67,9 +67,12 @@ func (s *Server) handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		startingChips := req.StartingChips
-		if startingChips <= 0 {
-			startingChips = 1000
+		startingChips := 1000
+		if req.StartingChips != nil {
+			startingChips = *req.StartingChips
+			if startingChips < 0 {
+				startingChips = 0
+			}
 		}
 		maxRebuys := req.MaxRebuys
 		if maxRebuys <= 0 {
@@ -170,7 +173,7 @@ func (s *Server) handleAddPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r2.StartingChips == 0 {
-		if errDb := s.updateUserChipsAndRebuys(user.UUID, user.Chips, 3); errDb != nil {
+		if errDb := store.ResetUserRebuys(s.db, user.UUID, 3); errDb != nil {
 			slog.Error("failed to reset player rebuys on table join", "uuid", user.UUID, "err", errDb)
 		}
 	}
@@ -213,7 +216,7 @@ func (s *Server) handleStart(w http.ResponseWriter, r *http.Request) {
 
 		var status types.GameStateResponse
 		if err == nil {
-			status = r2.Sg.GetStatus("", r2.Wsm.GetObserverCount())
+			status = r2.Sg.GetStatus("", r2.Wsm.GetObserverCount(), r2.StartingChips)
 		}
 
 		if r2.StartingChips == 0 {
@@ -329,7 +332,7 @@ func (s *Server) handleAct(w http.ResponseWriter, r *http.Request) {
 
 	var status types.GameStateResponse
 	if err == nil {
-		status = r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount())
+		status = r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount(), r2.StartingChips)
 	}
 
 	if r2.StartingChips == 0 {
@@ -369,7 +372,7 @@ func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 		playerID = user.UUID
 	}
 
-	writeJSON(w, http.StatusOK, r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount()))
+	writeJSON(w, http.StatusOK, r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount(), r2.StartingChips))
 }
 
 func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
@@ -414,7 +417,7 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 	go s.writePump(r2, client)
 	go s.readPump(r2, client)
 
-	initialState := r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount())
+	initialState := r2.Sg.GetStatus(playerID, r2.Wsm.GetObserverCount(), r2.StartingChips)
 	initialState.Observers = r2.Wsm.GetObserverNames()
 	client.Send <- initialState
 }
@@ -501,7 +504,7 @@ func (s *Server) handleStand(w http.ResponseWriter, r *http.Request) {
 	found := false
 	for _, p := range g.Players {
 		if p.ID == user.UUID {
-			finalChips = p.Chips
+			finalChips = p.Chips + p.Bet
 			found = true
 			break
 		}

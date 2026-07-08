@@ -8,15 +8,17 @@ import (
 )
 
 type WSManager struct {
-	clientsMu sync.RWMutex
-	clients   map[*WsClient]bool
-	sg        *SafeGame
+	clientsMu     sync.RWMutex
+	clients       map[*WsClient]bool
+	sg            *SafeGame
+	StartingChips int
 }
 
-func NewWSManager(sg *SafeGame) *WSManager {
+func NewWSManager(sg *SafeGame, startingChips int) *WSManager {
 	return &WSManager{
-		clients: make(map[*WsClient]bool),
-		sg:      sg,
+		clients:       make(map[*WsClient]bool),
+		sg:            sg,
+		StartingChips: startingChips,
 	}
 }
 
@@ -70,7 +72,7 @@ func (wsm *WSManager) Broadcast() {
 	defer wsm.clientsMu.RUnlock()
 
 	for client := range wsm.clients {
-		resp := snap.toResponse(client.PlayerID, observerCount)
+		resp := snap.toResponse(client.PlayerID, observerCount, wsm.StartingChips)
 		resp.Observers = observers
 		select {
 		case client.Send <- resp:

@@ -20,6 +20,8 @@ export default function RoomBrowser({ playerName, playerChips, onJoinRoom, onLog
   const [bigBlind, setBigBlind] = useState(20);
   const [creating, setCreating] = useState(false);
   const [blindEscalationMins, setBlindEscalationMins] = useState(5);
+  const [chipMode, setChipMode] = useState<"tournament" | "persistent">("tournament");
+  const [startingChips, setStartingChips] = useState(1000);
 
   const [joinCode, setJoinCode] = useState("");
   const [showJoinCode, setShowJoinCode] = useState(false);
@@ -54,7 +56,8 @@ export default function RoomBrowser({ playerName, playerChips, onJoinRoom, onLog
         roomName || `${playerName}'s Table`,
         smallBlind,
         bigBlind,
-        blindEscalationMins
+        blindEscalationMins,
+        chipMode === "tournament" ? startingChips : 0
       );
       onJoinRoom(room.id, room.creator_id);
     } catch (err: any) {
@@ -192,6 +195,54 @@ export default function RoomBrowser({ playerName, playerChips, onJoinRoom, onLog
                   <option value={0}>Never (Static Blinds)</option>
                 </select>
               </div>
+              <div>
+                <label className="text-slate-400 text-xs font-bold uppercase tracking-wider block mb-1.5">
+                  Chip Mode
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setChipMode("tournament")}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all text-left ${
+                      chipMode === "tournament"
+                        ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
+                        : "bg-slate-800/60 border-white/5 text-slate-400 hover:border-white/10"
+                    }`}
+                  >
+                    <div className="text-base mb-0.5">🏆</div>
+                    <div>Tournament</div>
+                    <div className="text-[10px] opacity-60 font-normal mt-0.5">Fixed starting chips</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setChipMode("persistent")}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all text-left ${
+                      chipMode === "persistent"
+                        ? "bg-emerald-600/30 border-emerald-500/50 text-emerald-200"
+                        : "bg-slate-800/60 border-white/5 text-slate-400 hover:border-white/10"
+                    }`}
+                  >
+                    <div className="text-base mb-0.5">💰</div>
+                    <div>Persistent</div>
+                    <div className="text-[10px] opacity-60 font-normal mt-0.5">Use account chips</div>
+                  </button>
+                </div>
+              </div>
+              {chipMode === "tournament" && (
+                <div>
+                  <label className="text-slate-400 text-xs font-bold uppercase tracking-wider block mb-1.5">
+                    Starting Chips
+                  </label>
+                  <input
+                    type="number"
+                    value={startingChips}
+                    min={100}
+                    step={100}
+                    onChange={e => setStartingChips(Number(e.target.value))}
+                    className="w-full bg-slate-800/60 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500/50 transition-colors"
+                  />
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={creating}
@@ -272,6 +323,16 @@ export default function RoomBrowser({ playerName, playerChips, onJoinRoom, onLog
                           <span className="text-slate-500 text-xs">
                             {room.player_count}/{room.max_players} players
                           </span>
+                          <span className="text-slate-600 text-xs">·</span>
+                          {room.starting_chips > 0 ? (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                              🏆 Tournament
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                              💰 Persistent
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

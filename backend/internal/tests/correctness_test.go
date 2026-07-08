@@ -125,7 +125,7 @@ func TestSidePotsCalculation(t *testing.T) {
 
 func TestConnectionCollision(t *testing.T) {
 	sg := room.NewSafeGame(10, 20)
-	wsm := room.NewWSManager(sg)
+	wsm := room.NewWSManager(sg, 1000)
 
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		upgrader := websocket.Upgrader{

@@ -78,7 +78,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
     );
   }
 
-  const btnClass = "py-3.5 sm:py-4 px-3 sm:px-5 font-black rounded-xl text-sm sm:text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] border hover:shadow-lg";
+  const btnClass = "h-full py-4 px-3 sm:px-5 font-black rounded-xl text-sm sm:text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] border hover:shadow-lg flex items-center justify-center whitespace-nowrap";
 
   return (
     <div className="flex flex-col space-y-4">
@@ -88,7 +88,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
           onClick={() => handleButtonClick("fold")}
           className={`${btnClass} bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 text-red-200 hover:text-red-100`}
         >
-          Fold <span className="text-red-400/50 text-xs font-normal ml-1">[F]</span>
+          Fold <span className="hidden sm:inline text-red-400/50 text-xs font-normal ml-1">[F]</span>
         </button>
 
         {toCall === 0 ? (
@@ -97,7 +97,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
             onClick={() => handleButtonClick("check")}
             className={`${btnClass} bg-blue-950/40 hover:bg-blue-950/60 border border-blue-500/30 text-blue-200 hover:text-blue-100`}
           >
-            Check <span className="text-blue-400/50 text-xs font-normal ml-1">[C]</span>
+            Check <span className="hidden sm:inline text-blue-400/50 text-xs font-normal ml-1">[C]</span>
           </button>
         ) : (
           <button
@@ -105,7 +105,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
             onClick={() => handleButtonClick("call")}
             className={`${btnClass} bg-emerald-950/40 hover:bg-emerald-950/60 border border-emerald-500/30 text-emerald-200 hover:text-emerald-100 flex flex-col items-center justify-center`}
           >
-            <span>Call ({toCall}) <span className="text-emerald-400/50 text-xs font-normal ml-1">[C]</span></span>
+            <span>Call ({toCall}) <span className="hidden sm:inline text-emerald-400/50 text-xs font-normal ml-1">[C]</span></span>
             <span className="text-[10px] text-emerald-400/60 font-semibold leading-none mt-0.5">
               Odds: {Math.round((toCall / (gameState.pot + toCall)) * 100)}% pot
             </span>
@@ -118,7 +118,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
             onClick={() => handleButtonClick("raise", raiseAmount)}
             className={`${btnClass} bg-purple-900/50 hover:bg-purple-900/70 border border-purple-500/30 text-purple-200 hover:text-purple-100`}
           >
-            Raise ({raiseAmount}) <span className="text-purple-400/50 text-xs font-normal ml-1">[R]</span>
+            Raise ({raiseAmount}) <span className="hidden sm:inline text-purple-400/50 text-xs font-normal ml-1">[R]</span>
           </button>
         )}
 
@@ -127,7 +127,7 @@ export default function ActionPanel({ gameState, playerId, onAction }: ActionPan
           onClick={() => handleButtonClick("all_in")}
           className={`${btnClass} bg-amber-900/40 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 hover:text-amber-100`}
         >
-          All-In <span className="text-amber-400/50 text-xs font-normal ml-1">[A]</span>
+          All-In <span className="hidden sm:inline text-amber-400/50 text-xs font-normal ml-1">[A]</span>
         </button>
       </div>
 

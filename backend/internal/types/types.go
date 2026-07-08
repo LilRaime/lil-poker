@@ -33,6 +33,7 @@ type PlayerStatus struct {
 	BiggestPotWon int         `json:"biggest_pot_won"`
 	IsSmallBlind  bool        `json:"is_small_blind"`
 	IsBigBlind    bool        `json:"is_big_blind"`
+	ExposedCards  bool        `json:"exposed_cards"`
 }
 
 type WinnerStatus struct {
@@ -79,4 +80,5 @@ type GameStateResponse struct {
 	CreatorID           string             `json:"creator_id,omitempty"`
 	SubPots             []SubPot           `json:"sub_pots,omitempty"`
 	Observers           []string           `json:"observers,omitempty"`
+	StartingChips       int                `json:"starting_chips"`
 }

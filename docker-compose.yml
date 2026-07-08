@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-lil-poker}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -53,7 +53,7 @@ services:
     build: ./frontend
     container_name: lil-poker-frontend
     ports:
-      - "8090:80"
+      - "${FRONTEND_PORT:-8090}:80"
     depends_on:
       - api
     restart: unless-stopped

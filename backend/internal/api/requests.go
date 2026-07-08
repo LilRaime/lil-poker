@@ -6,7 +6,7 @@ type CreateRoomRequest struct {
 	BigBlind            int    `json:"big_blind"`
 	MaxPlayers          int    `json:"max_players"`
 	BlindEscalationMins *int   `json:"blind_escalation_mins,omitempty"`
-	StartingChips       int    `json:"starting_chips,omitempty"`
+	StartingChips       *int   `json:"starting_chips,omitempty"`
 	MaxRebuys           int    `json:"max_rebuys,omitempty"`
 	TurnTimeoutSecs     int    `json:"turn_timeout_secs,omitempty"`
 }

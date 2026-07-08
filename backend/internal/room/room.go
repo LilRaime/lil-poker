@@ -55,7 +55,7 @@ func newRoom(id, name, creatorID string, maxPlayers, sb, bb, escalationMins, sta
 		CreatorID:           creatorID,
 		MaxPlayers:          maxPlayers,
 		Sg:                  sg,
-		Wsm:                 NewWSManager(sg),
+		Wsm:                 NewWSManager(sg, startingChips),
 		LastActive:          time.Now(),
 		BlindEscalationMins: escalationMins,
 		StartingChips:       startingChips,

@@ -80,7 +80,7 @@ export default function Header({
 
   return (
     <header className="glass-panel-heavy border-b border-white/5 py-1.5 px-3 sm:py-2.5 sm:px-6 flex justify-between items-center z-10 sticky top-0">
-      <div className="flex items-center space-x-1.5 sm:space-x-3">
+      <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-3">
         <span className="text-xl sm:text-2xl text-purple-400">♠</span>
         <div>
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -107,39 +107,44 @@ export default function Header({
         <div className="flex items-center space-x-3.5 sm:space-x-6">
           {gameState && (
             <>
-              <div className="hidden sm:block text-center select-none">
+              <div className="text-center select-none">
                 <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Phase</div>
-                <div className="font-bold text-indigo-300 leading-tight text-xs sm:text-sm">{gameState.phase}</div>
+                <div className="font-bold text-indigo-300 leading-tight text-xs sm:text-sm whitespace-nowrap">{gameState.phase}</div>
                 {gameState.observer_count !== undefined && gameState.observer_count > 0 && (
-                  <div className="text-[9px] text-slate-500 font-bold leading-none mt-1">
+                  <div className="hidden sm:block text-[9px] text-slate-500 font-bold leading-none mt-1">
                     👁️ {gameState.observer_count} observing
                   </div>
                 )}
               </div>
               <div className="hidden sm:block h-8 w-px bg-white/10" />
-              <div className="hidden sm:block text-center select-none">
-                <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Blinds</div>
-                <div className="font-bold text-slate-300 leading-tight text-xs sm:text-sm">
-                  {gameState.small_blind} / {gameState.big_blind}
-                </div>
-                {gameState.phase !== "Waiting" && gameState.blinds_raise_deadline > 0 && (
-                  <div className="flex flex-col items-center mt-0.5">
-                    {timeUntilRaise && (
-                      <div className="text-[10px] text-purple-400 font-bold leading-none mb-1">
-                        Raise in: {timeUntilRaise}
-                      </div>
-                    )}
-                    {gameState.next_small_blind !== undefined && (
-                      <div className="text-[8px] text-slate-400/80 font-medium leading-normal">
+              <div className="text-center select-none">
+                <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Mode</div>
+                {gameState.starting_chips > 0 ? (
+                  <div className="text-xs sm:text-sm font-black text-purple-300 leading-tight whitespace-nowrap">🏆 Tournament</div>
+                ) : (
+                  <div className="text-xs sm:text-sm font-black text-emerald-300 leading-tight whitespace-nowrap">💰 Persistent</div>
+                )}
+              </div>
+              <div className="hidden sm:block h-8 w-px bg-white/10" />
+              <div className="select-none">
+                <div className="flex items-center gap-2">
+                  <div>
+                    <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Blind</div>
+                    <div className="font-black text-slate-200 text-xs sm:text-sm leading-none whitespace-nowrap">{gameState.small_blind}/{gameState.big_blind}</div>
+                  </div>
+                  {gameState.phase !== "Waiting" && gameState.blinds_raise_deadline > 0 && gameState.next_small_blind !== undefined && (
+                    <div className="text-center">
+                      <div className="text-xxs text-slate-500 font-bold leading-none mb-1 whitespace-nowrap">{timeUntilRaise ?? ""}</div>
+                      <div className="font-black text-slate-400 text-xs sm:text-sm leading-none whitespace-nowrap">
                         {gameState.next_small_blind === gameState.small_blind ? (
-                          <span className="text-amber-500/75">Blinds Capped</span>
+                          <span className="text-amber-500/75">cap</span>
                         ) : (
-                          <span>Next: {gameState.next_small_blind}/{gameState.next_big_blind}</span>
+                          <span>{gameState.next_small_blind}/{gameState.next_big_blind}</span>
                         )}
                       </div>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="hidden sm:block h-8 w-px bg-white/10" />
             </>
@@ -150,9 +155,9 @@ export default function Header({
             <div className="font-mono font-black text-slate-200 text-xs sm:text-sm tracking-widest leading-none">{currentRoomId}</div>
           </div>
 
-          <div className="h-8 w-px bg-white/10" />
+          <div className="hidden sm:block h-8 w-px bg-white/10" />
 
-          <div className="text-center select-none">
+          <div className="hidden sm:block text-center select-none">
             <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Exit</div>
             <button
               onClick={onLeaveRoom}
@@ -178,7 +183,7 @@ export default function Header({
             {hero && <div className="text-[10px] sm:text-xs text-emerald-400 font-bold mt-0.5">{hero.chips} 🪙</div>}
           </div>
           {hero && (
-            <div className="flex items-center gap-1 sm:gap-3">
+            <div className="hidden sm:flex items-center gap-1 sm:gap-3">
               <label className="flex items-center space-x-1 sm:space-x-2 text-[10px] sm:text-xs font-semibold text-slate-300 cursor-pointer select-none bg-slate-800 border border-white/5 hover:bg-slate-700 px-1.5 py-1 sm:px-3 sm:py-1.5 rounded-lg transition-colors">
                 <input
                   type="checkbox"
@@ -207,7 +212,7 @@ export default function Header({
           )}
           <button
             onClick={onLeave}
-            className="px-2 py-1 sm:px-3.5 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 border border-red-500/10 transition-colors"
+            className="hidden sm:block px-2 py-1 sm:px-3.5 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 border border-red-500/10 transition-colors"
           >
             Logout
           </button>

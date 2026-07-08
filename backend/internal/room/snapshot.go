@@ -24,6 +24,7 @@ type playerSnapshot struct {
 	BiggestPotWon int
 	IsSmallBlind  bool
 	IsBigBlind    bool
+	ExposedCards  bool
 }
 
 type gameSnapshot struct {
@@ -79,6 +80,7 @@ func (sg *SafeGame) getSnapshot() gameSnapshot {
 			BiggestPotWon: p.BiggestPotWon,
 			IsSmallBlind:  i == g.SmallBlindIdx,
 			IsBigBlind:    i == g.BigBlindIdx,
+			ExposedCards:  p.ExposedCards,
 		}
 	}
 
@@ -163,7 +165,7 @@ func (sg *SafeGame) getSnapshot() gameSnapshot {
 	}
 }
 
-func (snap gameSnapshot) toResponse(requestingPlayerID string, observerCount int) types.GameStateResponse {
+func (snap gameSnapshot) toResponse(requestingPlayerID string, observerCount int, startingChips int) types.GameStateResponse {
 	players := make([]types.PlayerStatus, len(snap.Players))
 	for i, p := range snap.Players {
 		ps := types.PlayerStatus{
@@ -182,10 +184,13 @@ func (snap gameSnapshot) toResponse(requestingPlayerID string, observerCount int
 			BiggestPotWon: p.BiggestPotWon,
 			IsSmallBlind:  p.IsSmallBlind,
 			IsBigBlind:    p.IsBigBlind,
+			ExposedCards:  p.ExposedCards,
 		}
 
 		showCards := false
-		if snap.Phase == "Waiting" {
+		if p.ExposedCards && (p.Folded || snap.Phase == "Waiting") {
+			showCards = true
+		} else if snap.Phase == "Waiting" {
 			hasShowdown := false
 			for _, w := range snap.LastWinners {
 				if len(w.HandCards) > 0 {
@@ -213,7 +218,7 @@ func (snap gameSnapshot) toResponse(requestingPlayerID string, observerCount int
 			ps.Hole = p.Hole
 		}
 
-		if requestingPlayerID == p.ID && len(p.Hole) > 0 && snap.Phase != "Waiting" && !p.Folded {
+		if (requestingPlayerID == p.ID || (p.ExposedCards && (p.Folded || snap.Phase == "Waiting"))) && len(p.Hole) > 0 {
 			ps.CurrentHand = p.HandStrength
 		}
 
@@ -244,12 +249,13 @@ func (snap gameSnapshot) toResponse(requestingPlayerID string, observerCount int
 		HandHistory:         snap.HandHistory,
 		CreatorID:           snap.CreatorID,
 		SubPots:             snap.SubPots,
+		StartingChips:       startingChips,
 	}
 }
 
-func (sg *SafeGame) GetStatus(requestingPlayerID string, observerCount int) types.GameStateResponse {
+func (sg *SafeGame) GetStatus(requestingPlayerID string, observerCount int, startingChips int) types.GameStateResponse {
 	snap := sg.getSnapshot()
-	return snap.toResponse(requestingPlayerID, observerCount)
+	return snap.toResponse(requestingPlayerID, observerCount, startingChips)
 }
 
 func (sg *SafeGame) GetGame() *game.Game {

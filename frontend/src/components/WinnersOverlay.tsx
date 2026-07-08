@@ -19,7 +19,7 @@ export default function WinnersOverlay({
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 sm:right-auto sm:w-80 sm:bottom-6 sm:left-6 z-50 glass-panel-heavy p-4 rounded-2xl shadow-2xl border border-amber-500/30 flex flex-col space-y-3 animate-fade-in">
+      <div className="fixed bottom-16 sm:bottom-6 left-3 right-3 sm:left-6 sm:right-auto sm:w-80 z-50 glass-panel-heavy p-3 sm:p-4 rounded-2xl shadow-2xl border border-amber-500/30 flex flex-col space-y-2 sm:space-y-3 animate-fade-in overflow-hidden">
         <div className="flex justify-between items-center border-b border-white/5 pb-2">
           <span className="flex items-center space-x-2 text-amber-300 font-black text-xs uppercase tracking-wider">
             🏆 Hand Winner

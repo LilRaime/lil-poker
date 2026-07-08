@@ -64,6 +64,15 @@ func CreateGuestUser(db *sql.DB, username, passwordHash string) (*User, error) {
 	return createUser(db, username, passwordHash, true)
 }
 
+func ResetUserRebuys(db *sql.DB, uuidStr string, rebuys int) error {
+	query := `UPDATE users SET rebuys_remaining = $1 WHERE uuid = $2`
+	_, err := db.Exec(query, rebuys, uuidStr)
+	if err != nil {
+		return fmt.Errorf("failed to reset user rebuys: %w", err)
+	}
+	return nil
+}
+
 func UpdateUserChipsAndRebuys(db *sql.DB, uuidStr string, chips, rebuys int) error {
 	query := `UPDATE users SET chips = $1, rebuys_remaining = $2 WHERE uuid = $3`
 	_, err := db.Exec(query, chips, rebuys, uuidStr)

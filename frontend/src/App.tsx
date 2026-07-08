@@ -204,7 +204,7 @@ export default function App() {
         onStandUp={handleStandUp}
       />
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4 max-w-7xl w-full mx-auto relative">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 max-w-7xl w-full mx-auto relative pb-20 sm:pb-4">
         {!hero ? (
           <Lobby
             playerName={playerName}
@@ -246,7 +246,7 @@ export default function App() {
               )}
 
               {gameState?.phase !== "Waiting" && gameState && (
-                <div className="w-full max-w-2xl mt-28 sm:mt-16 glass-panel-heavy p-4 rounded-2xl border border-white/10 shadow-2xl flex flex-col space-y-4">
+                <div className="w-full max-w-2xl mt-8 sm:mt-8 glass-panel-heavy p-4 rounded-2xl border border-white/10 shadow-2xl flex flex-col space-y-4">
                   <ActionPanel
                     gameState={gameState}
                     playerId={playerId}
@@ -255,16 +255,15 @@ export default function App() {
                   {hero && !hero.sitting_out && (
                     <div className="flex items-center justify-between border-t border-white/5 pt-3">
                       <span className="text-xs text-slate-400 font-semibold">Expose cards to the table?</span>
-                      <button
-                        onClick={() => handleShowCardsToggle(!hero.exposed_cards)}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${
-                          hero.exposed_cards
-                            ? "bg-purple-600 hover:bg-purple-500 text-white"
-                            : "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/5"
-                        }`}
-                      >
-                        {hero.exposed_cards ? "👁️ Show Cards" : "🙈 Muck Cards"}
-                      </button>
+                      <label className="flex items-center space-x-1.5 text-xs font-semibold text-slate-300 cursor-pointer select-none bg-slate-800 border border-white/5 px-3 py-1.5 rounded-lg hover:bg-slate-700 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={hero.exposed_cards}
+                          onChange={(e) => handleShowCardsToggle(e.target.checked)}
+                          className="accent-purple-500 rounded"
+                        />
+                        <span>Show Cards</span>
+                      </label>
                     </div>
                   )}
                 </div>
@@ -292,6 +291,48 @@ export default function App() {
           </div>
         )}
       </main>
+      {hero && (
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 glass-panel-heavy border-t border-white/10 px-3 py-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1 text-xs font-black text-amber-400 bg-slate-800/60 border border-white/5 px-2.5 py-1.5 rounded-lg whitespace-nowrap">
+            <span className="font-mono">{hero.chips.toLocaleString()}</span>
+            <span>🪙</span>
+          </div>
+          <label className="flex items-center space-x-1.5 text-xs font-semibold text-slate-300 cursor-pointer select-none bg-slate-800 border border-white/5 px-2.5 py-1.5 rounded-lg">
+            <input
+              type="checkbox"
+              checked={autoRebuy}
+              onChange={(e) => setAutoRebuy(e.target.checked)}
+              className="accent-purple-500 rounded"
+            />
+            <span>Auto</span>
+          </label>
+          <button
+            onClick={handleSitToggle}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${hero.sitting_out
+              ? "bg-amber-600/20 text-amber-300 border-amber-500/20"
+              : "bg-slate-800 text-slate-300 border-white/5"
+              }`}
+          >
+            {hero.sitting_out ? "Sit In" : "Sit Out"}
+          </button>
+          <button
+            onClick={() => handleStandUp().catch(console.error)}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border bg-red-950/20 text-red-400 border-red-500/10 transition-all"
+          >
+            Stand Up
+          </button>
+          <button
+            onClick={() => {
+              handleStandUp().catch(console.error);
+              leaveRoom();
+              setGameState(null);
+            }}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-900/30 text-red-300 border border-red-500/20 transition-all"
+          >
+            Leave
+          </button>
+        </div>
+      )}
     </div>
   );
 }

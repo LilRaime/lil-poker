@@ -188,8 +188,8 @@ const PlayerBoxComponent = function PlayerBox({
 
   return (
     <div className="flex flex-col items-center group relative">
-      <div className={`${cfg.tooltip} group-hover:opacity-100 opacity-0 pointer-events-none bg-slate-900/95 border border-purple-500/30 rounded-xl p-3 shadow-2xl z-30 text-[10px] font-bold text-slate-300 w-40 transition-all duration-200 flex flex-col space-y-1.5`}>
-        <div className="text-slate-100 border-b border-white/5 pb-1 font-black uppercase text-center tracking-wider text-[9px]">
+      <div className={`${cfg.tooltip} group-hover:opacity-100 opacity-0 pointer-events-none bg-slate-900/95 border border-purple-500/30 rounded-xl p-4 shadow-2xl z-30 text-xs font-bold text-slate-300 w-52 transition-all duration-200 flex flex-col space-y-2`}>
+        <div className="text-slate-100 border-b border-white/5 pb-1.5 font-black uppercase text-center tracking-wider text-[10px]">
           Session Stats
         </div>
         <div className="flex justify-between">
@@ -316,7 +316,7 @@ const PlayerBoxComponent = function PlayerBox({
       </div>
 
       {player.current_hand && (
-        <div style={handRankLabelStyle} className={`${cfg.handRank} bg-gradient-to-r from-purple-900/90 to-indigo-900/90 border border-purple-500/30 text-purple-200 px-2.5 py-1 rounded-lg text-[9px] sm:text-[10px] font-black shadow-md uppercase tracking-wider animate-fade-in text-center max-w-[220px] leading-tight flex items-center justify-center gap-1`}>
+        <div style={handRankLabelStyle} className={`${cfg.handRank} bg-gradient-to-r from-purple-800/90 to-indigo-800/90 border border-purple-400/40 text-purple-100 px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-black shadow-md uppercase tracking-wider animate-fade-in text-center max-w-none leading-tight flex items-center justify-center gap-1`}>
           <span>⭐️</span> <span>{player.current_hand}</span>
         </div>
       )}
