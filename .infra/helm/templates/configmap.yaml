@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lil-poker-config
+  namespace: {{ .Values.namespace }}
+data:
+  PORT: {{ .Values.api.port | quote }}
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_USER: {{ .Values.postgres.user | quote }}
+  DB_NAME: {{ .Values.postgres.database | quote }}
+  REDIS_ADDR: "redis:6379"
+  SMALL_BLIND: {{ .Values.game.smallBlind | quote }}
+  BIG_BLIND: {{ .Values.game.bigBlind | quote }}
+  TURN_TIMEOUT_SECS: {{ .Values.game.turnTimeoutSecs | quote }}
+  ALLOWED_ORIGINS: {{ .Values.auth.allowedOrigins | quote }}

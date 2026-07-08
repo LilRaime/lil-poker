@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: lil-poker-routes
+  namespace: {{ .Values.namespace }}
+spec:
+  parentRefs:
+    - name: lil-poker-gateway
+      namespace: {{ .Values.namespace }}
+  hostnames:
+    - {{ .Values.gateway.hostname | quote }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/game/ws
+      backendRefs:
+        - name: api
+          port: {{ .Values.api.port }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: api
+          port: {{ .Values.api.port }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: frontend
+          port: {{ .Values.frontend.port }}

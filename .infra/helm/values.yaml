@@ -1,0 +1,68 @@
+namespace: lil-poker
+
+api:
+  image:
+    repository: lil-poker-api
+    tag: local
+    pullPolicy: Never
+  replicas: 1
+  port: 8080
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+frontend:
+  image:
+    repository: lil-poker-frontend
+    tag: local
+    pullPolicy: Never
+  replicas: 2
+  port: 80
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+postgres:
+  image: postgres:17-alpine
+  user: postgres
+  database: lil-poker
+  password: postgres 
+  storage: 5Gi
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+redis:
+  image: redis:8.8-alpine
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+game:
+  smallBlind: 10
+  bigBlind: 20
+  turnTimeoutSecs: 20
+
+auth:
+  cookieSecret: "change-me-in-production"
+  allowedOrigins: "http://localhost:8090"
+
+gateway:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  hostname: poker.example.com
