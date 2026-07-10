@@ -83,7 +83,8 @@ func (s *Server) handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 			turnTimeout = 20
 		}
 
-		r2 := s.rm.CreateRoom(req.Name, creatorID, req.MaxPlayers, req.SmallBlind, req.BigBlind, escalationMins, startingChips, maxRebuys, turnTimeout)
+		roomID := r.URL.Query().Get("room")
+		r2 := s.rm.CreateRoom(roomID, req.Name, creatorID, req.MaxPlayers, req.SmallBlind, req.BigBlind, escalationMins, startingChips, maxRebuys, turnTimeout)
 		writeJSON(w, http.StatusCreated, r2.Info())
 	})(w, r)
 }

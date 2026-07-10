@@ -76,7 +76,12 @@ export const pokerApi = {
   },
 
   async createRoom(name: string, smallBlind: number, bigBlind: number, blindEscalationMins?: number, startingChips?: number): Promise<RoomInfo> {
-    return fetchJson<RoomInfo>("/api/rooms", "POST", {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let roomId = "";
+    for (let i = 0; i < 6; i++) {
+      roomId += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return fetchJson<RoomInfo>(`/api/rooms?room=${roomId}`, "POST", {
       name,
       small_blind: smallBlind,
       big_blind: bigBlind,

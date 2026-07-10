@@ -5,7 +5,7 @@ api:
     repository: lil-poker-api
     tag: local
     pullPolicy: Never
-  replicas: 1
+  replicas: 2
   port: 8080
   resources:
     requests:

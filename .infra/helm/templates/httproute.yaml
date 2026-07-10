@@ -7,8 +7,6 @@ spec:
   parentRefs:
     - name: lil-poker-gateway
       namespace: {{ .Values.namespace }}
-  hostnames:
-    - {{ .Values.gateway.hostname | quote }}
   rules:
     - matches:
         - path:

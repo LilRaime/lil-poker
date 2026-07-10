@@ -31,6 +31,7 @@ func (s *Server) roomFromRequest(w http.ResponseWriter, r *http.Request) *room.R
 	}
 	r2, ok := s.rm.GetRoom(roomID)
 	if !ok {
+		slog.Warn("roomFromRequest: room not found", "room_id", roomID, "server_id", s.serverID)
 		writeError(w, http.StatusNotFound, "room not found")
 		return nil
 	}
@@ -124,6 +125,7 @@ func (s *Server) writePump(r *room.Room, client *room.WsClient) {
 
 func (s *Server) broadcast(r *room.Room) {
 	r.Wsm.Broadcast()
+	s.rm.UpdateRoomInRedis(r)
 }
 
 func (s *Server) readPump(r2 *room.Room, client *room.WsClient) {

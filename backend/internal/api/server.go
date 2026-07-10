@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -31,6 +32,7 @@ type Server struct {
 	bypassAuth     bool
 	turnTimeout    time.Duration
 	allowedOrigins []string
+	serverID       string
 }
 
 func NewServer(db *sql.DB, cfg config.Config) *Server {
@@ -47,12 +49,16 @@ func NewServer(db *sql.DB, cfg config.Config) *Server {
 		turnTimeout = 20 * time.Second
 	}
 
+	serverIDBytes := make([]byte, 16)
+	_, _ = rand.Read(serverIDBytes)
+	serverID := hex.EncodeToString(serverIDBytes)
+
 	rdb := redis.NewClient(&redis.Options{
 		Addr: cfg.RedisAddr,
 	})
 
 	s := &Server{
-		rm: room.NewRoomManager(),
+		rm: room.NewRoomManager(serverID, rdb),
 		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				if len(cfg.AllowedOrigins) == 0 {
@@ -75,9 +81,11 @@ func NewServer(db *sql.DB, cfg config.Config) *Server {
 		cookieSecret:   secretBytes,
 		turnTimeout:    turnTimeout,
 		allowedOrigins: cfg.AllowedOrigins,
+		serverID:       serverID,
 	}
 
 	s.startCacheJanitor(1 * time.Minute)
+	go s.startHeartbeat()
 	return s
 }
 
@@ -87,11 +95,52 @@ func (s *Server) SetBypassAuth(v bool) {
 
 func (s *Server) Close() {
 	close(s.janitorDone)
+
+	if s.rdb != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		_ = s.rdb.Del(ctx, "poker:servers:"+s.serverID+":heartbeat").Err()
+		rooms, err := s.rdb.HGetAll(ctx, "poker:rooms").Result()
+		if err == nil {
+			var deadRooms []string
+			for roomID, jsonStr := range rooms {
+				var rr room.RedisRoom
+				if json.Unmarshal([]byte(jsonStr), &rr) == nil && rr.ServerID == s.serverID {
+					deadRooms = append(deadRooms, roomID)
+				}
+			}
+			if len(deadRooms) > 0 {
+				_ = s.rdb.HDel(ctx, "poker:rooms", deadRooms...).Err()
+			}
+		}
+	}
+
 	s.rm.Close()
 	s.authLimiter.Close()
 	s.actionLimiter.Close()
 	s.generalLimiter.Close()
 	s.rdb.Close()
+}
+
+func (s *Server) startHeartbeat() {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+	ctx := context.Background()
+
+	if s.rdb != nil {
+		_ = s.rdb.Set(ctx, "poker:servers:"+s.serverID+":heartbeat", "alive", 30*time.Second).Err()
+	}
+
+	for {
+		select {
+		case <-ticker.C:
+			if s.rdb != nil {
+				_ = s.rdb.Set(ctx, "poker:servers:"+s.serverID+":heartbeat", "alive", 30*time.Second).Err()
+			}
+		case <-s.janitorDone:
+			return
+		}
+	}
 }
 
 func (s *Server) startCacheJanitor(interval time.Duration) {

@@ -65,10 +65,9 @@ helm-setup:
 	  chmod +x /tmp/kind && sudo mv /tmp/kind /usr/local/bin/kind)
 	@kind get clusters | grep -q $(KIND_CLUSTER) || kind create cluster --name $(KIND_CLUSTER)
 	@echo "Installing Gateway API CRDs + Envoy Gateway..."
-	@kubectl apply -f https://github.com/envoyproxy/gateway/releases/latest/download/install.yaml
+	@kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/latest/download/install.yaml
 	@kubectl wait --namespace envoy-gateway-system \
-	  --for=condition=ready pod \
-	  --selector=app.kubernetes.io/name=gateway-helm \
+	  --for=condition=available deployment/envoy-gateway \
 	  --timeout=120s
 	@echo "Cluster ready."
 
@@ -115,7 +114,7 @@ helm-status:
 
 helm-open:
 	@echo "Opening http://localhost:$(FRONTEND_PORT) ..."
-	kubectl port-forward -n $(K8S_NAMESPACE) service/frontend $(FRONTEND_PORT):80
+	kubectl port-forward -n envoy-gateway-system svc/$$(kubectl get svc -n envoy-gateway-system -l gateway.envoyproxy.io/owning-gateway-name=lil-poker-gateway -o jsonpath='{.items[0].metadata.name}') $(FRONTEND_PORT):80
 
 helm-logs:
 	kubectl logs -n $(K8S_NAMESPACE) deployment/api -f
