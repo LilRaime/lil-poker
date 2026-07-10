@@ -449,11 +449,12 @@ func (s *Server) handleSit(w http.ResponseWriter, r *http.Request) {
 	r2.Sg.Lock()
 	var sitErr error
 	g := r2.Sg.GetGame()
-	if req.Action == "in" {
+	switch req.Action {
+	case "in":
 		sitErr = g.SitIn(user.UUID)
-	} else if req.Action == "out" {
+	case "out":
 		sitErr = g.SitOut(user.UUID)
-	} else {
+	default:
 		r2.Sg.Unlock()
 		writeError(w, http.StatusBadRequest, "invalid sit action (must be 'in' or 'out')")
 		return

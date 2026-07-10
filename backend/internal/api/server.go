@@ -119,7 +119,7 @@ func (s *Server) Close() {
 	s.authLimiter.Close()
 	s.actionLimiter.Close()
 	s.generalLimiter.Close()
-	s.rdb.Close()
+	_ = s.rdb.Close()
 }
 
 func (s *Server) startHeartbeat() {

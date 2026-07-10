@@ -81,13 +81,13 @@ func setupTestDB(t *testing.T) *sql.DB {
 		return nil
 	}
 	if err := dbDefault.Ping(); err != nil {
-		dbDefault.Close()
+		_ = dbDefault.Close()
 		t.Skipf("Skipping test: PostgreSQL is not running. Error: %v", err)
 		return nil
 	}
 
 	_, _ = dbDefault.Exec("CREATE DATABASE poker_test")
-	dbDefault.Close()
+	_ = dbDefault.Close()
 
 	connStrTest := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=poker_test sslmode=disable connect_timeout=2",
 		host, port, user, password)
@@ -97,13 +97,13 @@ func setupTestDB(t *testing.T) *sql.DB {
 	}
 
 	if err := dbTest.Ping(); err != nil {
-		dbTest.Close()
+		_ = dbTest.Close()
 		t.Fatalf("Failed to ping test database: %v", err)
 	}
 
 	err = store.RunMigrations(dbTest)
 	if err != nil {
-		dbTest.Close()
+		_ = dbTest.Close()
 		t.Fatalf("Failed to init schema on test db: %v", err)
 	}
 

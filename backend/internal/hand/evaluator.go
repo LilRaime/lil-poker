@@ -291,9 +291,10 @@ func hasFullHouseC(counts [15]int) bool {
 func getFullHouseC(counts [15]int) (card.Rank, card.Rank) {
 	var three, two card.Rank
 	for r, v := range counts {
-		if v == 3 {
+		switch v {
+		case 3:
 			three = card.Rank(r)
-		} else if v == 2 {
+		case 2:
 			two = card.Rank(r)
 		}
 	}

@@ -154,7 +154,7 @@ func TestConnectionCollision(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	if !wsm.IsPlayerConnected("player1") {
 		t.Error("expected player1 to be connected")

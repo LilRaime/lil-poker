@@ -24,7 +24,7 @@ func TestWebSocketBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create room: %v", err)
 	}
-	defer respRoom.Body.Close()
+	defer func() { _ = respRoom.Body.Close() }()
 	var roomInfo RoomInfo
 	if err := json.NewDecoder(respRoom.Body).Decode(&roomInfo); err != nil {
 		t.Fatalf("failed to decode room info: %v", err)
@@ -37,7 +37,7 @@ func TestWebSocketBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to connect to websocket: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	var initialMsg GameStateResponse
 	err = conn.ReadJSON(&initialMsg)
@@ -54,7 +54,7 @@ func TestWebSocketBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to register player: %v", err)
 	}
-	defer respReg.Body.Close()
+	defer func() { _ = respReg.Body.Close() }()
 	if respReg.StatusCode != http.StatusCreated {
 		t.Fatalf("expected StatusCreated, got %d", respReg.StatusCode)
 	}
@@ -70,7 +70,7 @@ func TestWebSocketBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to add player: %v", err)
 	}
-	defer respSeat.Body.Close()
+	defer func() { _ = respSeat.Body.Close() }()
 	if respSeat.StatusCode != http.StatusCreated {
 		t.Fatalf("expected StatusCreated, got %d", respSeat.StatusCode)
 	}

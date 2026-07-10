@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	if err = store.RunMigrations(db); err != nil {
 		log.Fatalf("Database migration failed: %v", err)

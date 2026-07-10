@@ -102,7 +102,7 @@ func UpdateUsersChipsTx(db *sql.DB, updates map[string]int) error {
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
 	}
-	defer stmt.Close()
+	defer func() { _ = stmt.Close() }()
 
 	for u, chips := range updates {
 		_, err := stmt.Exec(chips, u)
