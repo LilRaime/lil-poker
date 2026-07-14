@@ -8,6 +8,7 @@ interface WaitingPanelProps {
   onStart: () => void;
   onReset: () => void;
   onSetBlinds: (sb: number, bb: number) => void;
+  onAddBot: () => void;
 }
 
 export default function WaitingPanel({
@@ -16,6 +17,7 @@ export default function WaitingPanel({
   onStart,
   onReset,
   onSetBlinds,
+  onAddBot,
 }: WaitingPanelProps) {
   const canStart = isCreator && gameState.players.length >= 2;
   const [collapsed, setCollapsed] = useState(true);
@@ -97,14 +99,21 @@ export default function WaitingPanel({
                     disabled={!canStart}
                     className="flex-1 sm:flex-none px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-bold rounded-xl text-sm shadow transition-colors"
                   >
-                    Start Deal
+                    Start<span className="hidden sm:inline"> Deal</span>
                   </button>
                 )}
                 <button
                   onClick={onReset}
                   className="flex-1 sm:flex-none px-4 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-sm border border-white/5 transition-colors"
                 >
-                  Reset Table
+                  Reset<span className="hidden sm:inline"> Table</span>
+                </button>
+                <button
+                  onClick={onAddBot}
+                  disabled={gameState.players.length >= 8}
+                  className="flex-1 sm:flex-none px-4 py-2.5 bg-purple-950/50 hover:bg-purple-900/60 disabled:opacity-50 text-purple-300 border border-purple-500/20 hover:scale-105 active:scale-95 font-bold rounded-xl text-sm transition-all shadow-md"
+                >
+                  Add Bot
                 </button>
               </>
             ) : (

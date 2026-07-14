@@ -126,9 +126,9 @@ export default function Header({
                 )}
               </div>
               <div className="hidden sm:block h-8 w-px bg-white/10" />
-              <div className="select-none">
-                <div className="flex items-center gap-2">
-                  <div>
+              <div className="text-center select-none">
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="text-center">
                     <div className="text-xxs uppercase tracking-widest text-slate-500 font-bold leading-none mb-1">Blind</div>
                     <div className="font-black text-slate-200 text-xs sm:text-sm leading-none whitespace-nowrap">{gameState.small_blind}/{gameState.big_blind}</div>
                   </div>

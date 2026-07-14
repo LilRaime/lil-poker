@@ -16,6 +16,9 @@ interface PlayerBoxProps {
   activePlayerCount?: number;
   positionIndex: number;
   scale?: number;
+  isCreator?: boolean;
+  onKick?: (uuid: string) => void;
+  currentUserId?: string;
 }
 
 const getLayoutConfig = (positionIndex: number) => {
@@ -30,7 +33,7 @@ const getLayoutConfig = (positionIndex: number) => {
       handRankClass = "absolute top-[calc(100%+6px)] right-0 z-30 whitespace-nowrap text-center";
     }
     return {
-      cards: "absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 flex space-x-1 z-20",
+      cards: "absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 flex space-x-1 z-20",
       handRank: handRankClass,
       bet: betClass,
       tooltip: "absolute bottom-full mb-3 left-1/2 -translate-x-1/2 z-30",
@@ -49,7 +52,7 @@ const getLayoutConfig = (positionIndex: number) => {
       handRankClass = "absolute bottom-[calc(100%+6px)] right-0 z-30 whitespace-nowrap text-center";
     }
     return {
-      cards: "absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 flex space-x-1 z-20",
+      cards: "absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 flex space-x-1 z-20",
       handRank: handRankClass,
       bet: betClass,
       tooltip: "absolute top-full mt-3 left-1/2 -translate-x-1/2 z-30",
@@ -89,6 +92,9 @@ const PlayerBoxComponent = function PlayerBox({
   activePlayerCount = 1,
   positionIndex,
   scale = 1,
+  isCreator = false,
+  onKick,
+  currentUserId,
 }: PlayerBoxProps) {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [totalTime, setTotalTime] = useState<number>(20);
@@ -125,6 +131,7 @@ const PlayerBoxComponent = function PlayerBox({
   let bigBlindStyle: React.CSSProperties = {};
   let betLabelStyle: React.CSSProperties = {};
   let handRankLabelStyle: React.CSSProperties = {};
+  let kickBtnStyle: React.CSSProperties = {};
 
   if (scale !== 1) {
     nameStyle = {
@@ -166,6 +173,14 @@ const PlayerBoxComponent = function PlayerBox({
       fontSize: `${Math.max(8, 10 * scale) / scale}px`,
       top: `${dOffset}px`,
       left: `${dOffset}px`,
+    };
+
+    const kOffset = -6 / scale;
+    kickBtnStyle = {
+      width: `${Math.max(12, 18 * scale) / scale}px`,
+      height: `${Math.max(12, 18 * scale) / scale}px`,
+      bottom: `${kOffset}px`,
+      right: `${kOffset}px`,
     };
 
     betLabelStyle = {
@@ -219,9 +234,9 @@ const PlayerBoxComponent = function PlayerBox({
       <div
         style={scale !== 1 ? {
           width: `${(Math.max(80, 128 * scale) / scale)}px`,
-          height: `${(Math.max(48, 76 * scale) / scale)}px`,
+          height: `${(Math.max(54, 84 * scale) / scale)}px`,
         } : undefined}
-        className={`w-32 sm:w-36 rounded-2xl p-2.5 flex flex-col items-center justify-center transition-all shadow-xl relative ${isPlayerActive
+        className={`w-32 sm:w-36 rounded-2xl pt-2.5 pb-3 px-2.5 flex flex-col items-center justify-center transition-all shadow-xl relative ${isPlayerActive
           ? `bg-purple-950/80 border-2 ${color.border} active-turn-glow text-white`
           : player.sitting_out
             ? "bg-slate-950/60 border border-white/5 opacity-40 text-slate-500"
@@ -230,6 +245,30 @@ const PlayerBoxComponent = function PlayerBox({
               : `bg-slate-900/90 border ${color.border} border-opacity-30 text-slate-200`
           }`}
       >
+        {isCreator && player.id !== currentUserId && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onKick?.(player.id);
+            }}
+            style={scale !== 1 ? kickBtnStyle : undefined}
+            className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600/95 hover:bg-red-500 text-white flex items-center justify-center shadow-md border border-red-400 hover:scale-110 active:scale-95 transition-all z-30"
+            title="Kick Player"
+          >
+            <svg
+              style={scale !== 1 ? {
+                width: `${Math.max(6, 9 * scale) / scale}px`,
+                height: `${Math.max(6, 9 * scale) / scale}px`,
+              } : undefined}
+              className="w-2.5 h-2.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
         {isDealer && (
           <div style={dealerBtnStyle} className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-500 text-slate-950 text-xxs font-black flex items-center justify-center rounded-full border border-slate-900 shadow-md animate-bet-pop" title="Dealer">
             D

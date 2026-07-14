@@ -23,7 +23,8 @@ export interface UseGameActionsReturn {
   handleSitToggle: () => Promise<void>;
   handleSitInDirect: () => Promise<void>;
   handleRebuyAndSitIn: () => Promise<void>;
-  handleStandUp: () => Promise<void>;
+  handleStandUp: (targetUuid?: string) => Promise<void>;
+  handleAddBot: () => Promise<void>;
   handleSetBlinds: (sb: number, bb: number) => Promise<void>;
   handleShowCardsToggle: (show: boolean) => Promise<void>;
 }
@@ -149,9 +150,9 @@ export function useGameActions({
     }
   }, [playerId, roomId, updateChips, setErrorMessage]);
 
-  const handleStandUp = useCallback(async () => {
+  const handleStandUp = useCallback(async (targetUuid?: string) => {
     try {
-      await pokerApi.stand(roomId);
+      await pokerApi.stand(roomId, targetUuid);
     } catch (err: any) {
       if (err.status === 401) {
         handleLeave();
@@ -161,6 +162,14 @@ export function useGameActions({
       }
     }
   }, [roomId, handleLeave, setErrorMessage]);
+
+  const handleAddBot = useCallback(async () => {
+    try {
+      await pokerApi.addBot(roomId);
+    } catch (err: any) {
+      setErrorMessage(err.message);
+    }
+  }, [roomId, setErrorMessage]);
 
   const handleSetBlinds = useCallback(
     async (sb: number, bb: number) => {
@@ -195,6 +204,7 @@ export function useGameActions({
     handleSitInDirect,
     handleRebuyAndSitIn,
     handleStandUp,
+    handleAddBot,
     handleSetBlinds,
     handleShowCardsToggle,
   };

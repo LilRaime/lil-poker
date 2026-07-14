@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -61,10 +62,16 @@ func NewServer(db *sql.DB, cfg config.Config) *Server {
 		rm: room.NewRoomManager(serverID, rdb),
 		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					return true
+				}
+				if u, err := url.Parse(origin); err == nil && u.Host == r.Host {
+					return true
+				}
 				if len(cfg.AllowedOrigins) == 0 {
 					return true
 				}
-				origin := r.Header.Get("Origin")
 				for _, o := range cfg.AllowedOrigins {
 					if o == origin {
 						return true

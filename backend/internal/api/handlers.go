@@ -499,14 +499,34 @@ func (s *Server) handleStand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var req struct {
+		UUID string `json:"uuid"`
+	}
+	if r.ContentLength > 0 {
+		_ = json.NewDecoder(r.Body).Decode(&req)
+	}
+
+	targetUUID := user.UUID
+	isKick := false
+	if req.UUID != "" {
+		if r2.CreatorID != "" && user.UUID != r2.CreatorID {
+			writeError(w, http.StatusForbidden, "only the room creator can kick players")
+			return
+		}
+		targetUUID = req.UUID
+		isKick = true
+	}
+
 	var finalChips int
 	r2.Sg.Lock()
 	g := r2.Sg.GetGame()
 	
 	found := false
+	var targetName string
 	for _, p := range g.Players {
-		if p.ID == user.UUID {
+		if p.ID == targetUUID {
 			finalChips = p.Chips + p.Bet
+			targetName = p.Name
 			found = true
 			break
 		}
@@ -518,7 +538,7 @@ func (s *Server) handleStand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	standErr := g.RemovePlayer(user.UUID)
+	standErr := g.RemovePlayer(targetUUID)
 	r2.Sg.UpdateHandEvaluations()
 	r2.Sg.CheckRecordHandHistoryLocked()
 	r2.Sg.Unlock()
@@ -528,13 +548,19 @@ func (s *Server) handleStand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r2.Wsm.DisconnectPlayer(targetUUID)
+
 	if r2.StartingChips == 0 {
-		if errDb := s.updateUserChips(user.UUID, finalChips); errDb != nil {
-			slog.Error("failed to update user chips on stand up", "uuid", user.UUID, "err", errDb)
+		if errDb := s.updateUserChips(targetUUID, finalChips); errDb != nil {
+			slog.Error("failed to update user chips on stand up/kick", "uuid", targetUUID, "err", errDb)
 		}
 	}
 
-	r2.Sg.AddSystemMessage(fmt.Sprintf("%s stood up and left the table.", user.Username))
+	if isKick {
+		r2.Sg.AddSystemMessage(fmt.Sprintf("%s was kicked from the table.", targetName))
+	} else {
+		r2.Sg.AddSystemMessage(fmt.Sprintf("%s stood up and left the table.", targetName))
+	}
 
 	writeJSON(w, http.StatusOK, map[string]string{"message": "successfully stood up"})
 	s.broadcast(r2)

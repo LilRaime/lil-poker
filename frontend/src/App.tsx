@@ -111,6 +111,7 @@ export default function App() {
     handleSitInDirect,
     handleRebuyAndSitIn,
     handleStandUp,
+    handleAddBot,
     handleSetBlinds,
     handleShowCardsToggle,
   } = useGameActions({
@@ -164,7 +165,9 @@ export default function App() {
         <div className="fixed top-4 inset-x-0 flex justify-center z-50 pointer-events-none">
           <div className="pointer-events-auto bg-red-950/80 border border-red-500/30 text-red-200 px-6 py-3 rounded-full shadow-2xl backdrop-blur flex items-center space-x-3 animate-bounce">
             <span className="text-red-500 font-bold">⚠️</span>
-            <span className="text-sm font-semibold">{errorMessage}</span>
+            <span className="text-sm font-semibold flex items-center flex-wrap gap-y-1">
+              {renderFormattedMessage(errorMessage)}
+            </span>
             <button
               onClick={() => setErrorMessage(null)}
               className="ml-1 text-red-400 hover:text-red-200 font-bold text-lg leading-none transition-colors"
@@ -232,6 +235,7 @@ export default function App() {
                   onStart={handleStartGame}
                   onReset={handleResetGame}
                   onSetBlinds={handleSetBlinds}
+                  onAddBot={handleAddBot}
                 />
               )}
 
@@ -242,6 +246,8 @@ export default function App() {
                   onJoin={handleJoin}
                   winningCards={winningCards}
                   isShowdown={isShowdown}
+                  isCreator={!!playerId && playerId === currentRoomCreatorId}
+                  onKick={handleStandUp}
                 />
               )}
 
@@ -335,4 +341,42 @@ export default function App() {
       )}
     </div>
   );
+}
+
+function CopyableCode({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <code
+      onClick={handleCopy}
+      className="cursor-pointer bg-slate-900 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-white/10 rounded px-1.5 py-0.5 mx-1 font-mono text-xs transition-all relative group inline-flex items-center gap-1 select-all"
+      title="Click to copy"
+    >
+      {code}
+      <span className="text-[10px] text-slate-500 group-hover:text-slate-400 font-normal">
+        {copied ? "📋 Copied!" : "🗐"}
+      </span>
+    </code>
+  );
+}
+
+function renderFormattedMessage(message: string) {
+  if (!message.includes("`")) {
+    return message;
+  }
+  const parts = message.split("`");
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      return <CopyableCode key={index} code={part} />;
+    }
+    return <span key={index}>{part}</span>;
+  });
 }

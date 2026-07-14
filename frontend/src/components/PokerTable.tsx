@@ -33,13 +33,13 @@ const getSeatStyle = (index: number, scale: number): React.CSSProperties => {
   const isMobile = scale !== 1;
   const factor = isMobile ? 1 - scale : 0;
 
-  const edgeOffsetVertical = - (55 + 50 * factor) / scale;
-  const edgeOffsetHorizontal = - (55 + 35 * factor) / scale;
+  const edgeOffsetVertical = - (72 + 50 * factor) / scale;
+  const sideSeatOffset = - (92 + 35 * factor) / scale;
 
-  const cornerY = - (40 + 40 * factor) / scale;
+  const cornerY = - (52 + 40 * factor) / scale;
   const cornerX = (15 - 45 * factor) / scale;
 
-  const clampedEdge = isMobile ? Math.max(-36, edgeOffsetHorizontal) : edgeOffsetHorizontal;
+  const clampedSideEdge = isMobile ? Math.max(-48, sideSeatOffset) : sideSeatOffset;
   const clampedCornerX = isMobile ? Math.max(-36, cornerX) : cornerX;
 
   switch (index) {
@@ -48,7 +48,7 @@ const getSeatStyle = (index: number, scale: number): React.CSSProperties => {
     case 1:
       return { bottom: `${cornerY}px`, left: `${clampedCornerX}px` };
     case 2:
-      return { top: "50%", left: `${clampedEdge}px` };
+      return { top: "50%", left: `${clampedSideEdge}px` };
     case 3:
       return { top: `${cornerY}px`, left: `${clampedCornerX}px` };
     case 4:
@@ -56,7 +56,7 @@ const getSeatStyle = (index: number, scale: number): React.CSSProperties => {
     case 5:
       return { top: `${cornerY}px`, right: `${clampedCornerX}px` };
     case 6:
-      return { top: "50%", right: `${clampedEdge}px` };
+      return { top: "50%", right: `${clampedSideEdge}px` };
     case 7:
       return { bottom: `${cornerY}px`, right: `${clampedCornerX}px` };
     default:
@@ -70,6 +70,8 @@ interface PokerTableProps {
   onJoin: (seat: number) => void;
   winningCards: string[];
   isShowdown: boolean;
+  isCreator: boolean;
+  onKick: (uuid: string) => void;
 }
 
 export default function PokerTable({
@@ -78,6 +80,8 @@ export default function PokerTable({
   onJoin,
   winningCards,
   isShowdown,
+  isCreator,
+  onKick,
 }: PokerTableProps) {
   const { flyingChips, removeChip } = useFlyingChips(gameState, playerId);
 
@@ -131,7 +135,7 @@ export default function PokerTable({
       .sort((a, b) => a.seat - b.seat);
   }, [gameState.players]);
 
-    const extraHeight = scale === 1 ? 20 : Math.round((1 - scale) * 270);
+  const extraHeight = scale === 1 ? 20 : Math.round((1 - scale) * 270);
 
   return (
     <div
@@ -215,12 +219,6 @@ export default function PokerTable({
                 ))
               )}
             </div>
-
-            {gameState.phase !== "Waiting" && (
-              <span className="text-xxs uppercase font-black tracking-widest bg-indigo-500/20 text-indigo-300 px-3 py-0.5 rounded-full mt-3 border border-indigo-500/10">
-                {gameState.phase}
-              </span>
-            )}
           </div>
 
           {Array.from({ length: 8 }).map((_, seatIdx) => {
@@ -262,6 +260,9 @@ export default function PokerTable({
                     activePlayerCount={activePlayers.length}
                     positionIndex={positionIndex}
                     scale={scale}
+                    isCreator={isCreator}
+                    onKick={onKick}
+                    currentUserId={playerId}
                   />
                 ) : (
                   <div

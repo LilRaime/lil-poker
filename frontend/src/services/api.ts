@@ -117,8 +117,12 @@ export const pokerApi = {
     return fetchJson<MessageResponse>(roomUrl("/api/game/sit", roomId), "POST", { action });
   },
 
-  async stand(roomId: string): Promise<MessageResponse> {
-    return fetchJson<MessageResponse>(roomUrl("/api/game/stand", roomId), "POST");
+  async stand(roomId: string, uuid?: string): Promise<MessageResponse> {
+    return fetchJson<MessageResponse>(roomUrl("/api/game/stand", roomId), "POST", { uuid });
+  },
+
+  async addBot(roomId: string): Promise<MessageResponse> {
+    return fetchJson<MessageResponse>(roomUrl("/api/game/add-bot", roomId), "POST");
   },
 
   async setBlinds(smallBlind: number, bigBlind: number, roomId: string): Promise<MessageResponse> {

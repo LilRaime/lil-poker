@@ -47,6 +47,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
   frontend:

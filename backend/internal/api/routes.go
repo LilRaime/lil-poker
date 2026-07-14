@@ -27,6 +27,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /api/game/act", s.limit(s.limitBody(s.handleAct, bodyLimit), s.actionLimiter))
 	mux.HandleFunc("POST /api/game/sit", s.limit(s.limitBody(s.handleSit, bodyLimit), s.generalLimiter))
 	mux.HandleFunc("POST /api/game/stand", s.limit(s.limitBody(s.handleStand, bodyLimit), s.generalLimiter))
+	mux.HandleFunc("POST /api/game/add-bot", s.limit(s.limitBody(s.handleAddBot, bodyLimit), s.generalLimiter))
 	mux.HandleFunc("POST /api/game/blinds", s.limit(s.limitBody(s.handleUpdateBlinds, bodyLimit), s.generalLimiter))
 	mux.HandleFunc("GET /api/game/status", s.handleStatus)
 	mux.HandleFunc("GET /api/game/ws", s.handleWS)
