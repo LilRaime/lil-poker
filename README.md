@@ -164,6 +164,48 @@ make lint
 
 ---
 
+## 🤖 Playing with AI Bots (Reinforcement Learning)
+
+Lil Poker is fully compatible with the reinforcement learning bot trained in the [lil-poker-rl](https://github.com/LilRaime/lil-poker-rl) repository. You can play against the bot either inside Docker containers or by running the bot agent script locally.
+
+### Prerequisites
+
+You must first build the bot's Docker image locally:
+```bash
+cd ../lil-poker-rl # Navigate to the bot repository
+docker build -t lil-poker-rl .
+```
+
+### Option A: Spawning Bots via UI (Docker)
+
+If you are running Lil Poker via Docker Compose (`make docker-up`), the Go API mounts the local `/var/run/docker.sock` to dynamically spawn bot containers on demand.
+
+1. Open `http://localhost:8090` in your browser.
+2. Create or join a room.
+3. Click the **Add Bot** button inside the lobby panel.
+4. A new container named after the bot (e.g., `RL_Bot_453`) will be spun up.
+5. If the bot is kicked (by clicking the **×** button on its player card in the UI) or stands up, its container will cleanly exit and automatically delete itself.
+
+### Option B: Running Bots Locally (without Docker)
+
+You can run the bot script on your host machine to connect to a running room.
+
+1. Navigate to the `lil-poker-rl` directory on your host:
+   ```bash
+   cd ../lil-poker-rl
+   ```
+2. Activate the virtual environment:
+   ```bash
+   source .venv/bin/activate
+   ```
+3. Find your game room ID from the browser URL (e.g., `EN3FEM` from `http://localhost:8090/?room=EN3FEM`).
+4. Start the bot agent:
+   ```bash
+   python -m agent.play_live --room <ROOM_ID> --url http://localhost:8090 --name MyLocalBot --algo ppo --device cpu
+   ```
+
+---
+
 ## 📄 License
 
 This project is licensed under the **GNU General Public License v3 (GPL-3.0)**
