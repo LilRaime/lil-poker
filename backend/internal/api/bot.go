@@ -114,7 +114,6 @@ func (s *Server) handleAddBot(w http.ResponseWriter, r *http.Request) {
 					"--room", r2.ID,
 					"--url", backendURL,
 					"--name", botName,
-					"--algo", "ppo",
 					"--device", "cpu",
 				},
 				HostConfig: HostConfigType{
@@ -212,7 +211,6 @@ func (s *Server) handleAddBot(w http.ResponseWriter, r *http.Request) {
 			"--room", r2.ID,
 			"--url", backendURL,
 			"--name", botName,
-			"--algo", "ppo",
 			"--device", "cpu",
 		}
 
